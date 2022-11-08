@@ -1,0 +1,137 @@
+from utils import sound
+from utils.brick import TouchSensor, wait_ready_sensors
+from utils.brick import Motor
+import time
+
+#first, need to intake user inputs from buttons- input these into an array
+#add up user inputs- if more than 15 cubes used, output an error (sound on the speaker??)
+#divide the array for every 5 into a new array: firstRow, secondRow, thirdRow, fourthRow, fifthRow
+#for the first row, this will be the furthest row. 
+#do a for loop combined with if statements to move the blocks into place using narrow pusher, then when for loop is done move the big pusher
+#repeat for all 5 rows
+
+
+#FEATURES TO ADD: 
+#TEST MOTORS TO ADD IN HOW MANY ROTATIONS IS EACH POSITION
+#ELIMINATE REDUNDANCY FOR WIDE PUSHER, IF A ROW DOESN'T HAVE ANY CUBES THEN THE PUSHER SHOULDN'T EVEN MOVE
+
+# Associating ports
+NARROW_PUSHER = Motor("A")
+WIDE_PUSHER = Motor("B")
+button1 = TouchSensor(1) #for number 1
+button2 = TouchSensor(2) #for next, if 1 has just been pressed number will be 1. If 1 has not been pressed, number will be 0
+
+myList = []  #list where numbers will be stored
+firstRow = []
+secondRow = []
+thirdRow = []
+fourthRow = []
+fifthRow = []
+
+#Sounds- need sound for error, and sound for buttons with user inputs
+SOUNDERROR = sound.Sound(duration=0.5, volume=100, pitch="A4", mod_f=10, mod_k=2) #alien sound 
+#SOUND = sound.Sound(duration= 0.3, pitch=1000, volume=93)
+SOUNDINPUT = sound.Sound(duration = 0.1, pitch=480.00, volume= 100)
+
+
+wait_ready_sensors() # Note: Touch sensors actually have no initialization time 
+     # set to true to see output of sensor initialization: wait_ready_sensors(True)
+
+# Methods to play sounds
+def play_errorsound():
+    SOUNDERROR.play()
+    SOUNDERROR.wait_done()
+def play_inputsound():
+    SOUNDINPUT.play() 
+    SOUNDINPUT.wait_done()
+
+def narrowPusher(rowNumber):
+    x = 0
+    for x in rowNumber:
+        if rowNumber[x] == 1:  #if x = 1 have to move the pusher
+            if x == 0:
+                #move pusher to 1st position (furthest on board)
+                print("narrow pusher moved to 1st position")
+            if x == 1:
+                #move pusher to 2nd position (2nd furthest on board)
+                print("narrow pusher moved to 2nd position")
+            if x == 2:
+                #move pusher to 3rd position (middle on board)
+                print("narrow pusher moved to 3rd position")
+            if x == 3:
+                #move pusher to 4th position (2nd closest on board)
+                print("narrow pusher moved to 4th position")
+            if x == 4:
+                #move pusher to 5th position (closest on board)
+                print("narrow pusher moved to 5th position")
+
+def widePusher(levelNumber):
+    if levelNumber == 1:
+        print("move widePusher to the first row (furthest)")
+    if levelNumber == 2:
+        print("move widePusher to the second row")
+    if levelNumber == 3:
+        print("move widePusher to the third row")
+    if levelNumber == 4:
+        print("move widePusher to the fourth row")
+    if levelNumber == 5:
+        print("move widePusher to the fifth row (closest)")
+
+
+
+def mosaicMachine():  #this is the function for the overall mosaic robot
+    try:
+        i = 0
+        number = 0
+
+        if button1.is_pressed:
+            number = 1 #if button 1 is pressed, value is one
+            play_inputsound()
+        if button2.is_pressed:
+            myList[i] = number  #if button 2 is pressed
+            number = 0 #setting number back to 0
+        if i == 25: #should program just assume user is done if 25 numbers have been entered?
+            #move onto next part of code
+            print("moving on")
+
+            total = 0
+            k = 0
+    
+            while(k < len(myList)):
+                total = total + myList[k]
+                k += 1
+
+            if total > 15:
+                print("user has entered more than 15 blocks")
+                play_errorsound() #play error sound from speaker
+                #should program completely stop??
+
+            for j in range(0, 25, 5):   #splits big list into 5 lists of 5
+                x = j
+                print(myList[x:x+5])
+
+            #note: first row will be furthest row
+            firstRow = myList[0:4] 
+            secondRow = myList[5:9]
+            thirdRow = myList[10:14]
+            fourthRow = myList[15:19]
+            fifthRow = myList[20:24]
+
+            narrowPusher(firstRow)
+            widePusher(1)
+            narrowPusher(secondRow)
+            widePusher(2)
+            narrowPusher(thirdRow)
+            widePusher(3)
+            narrowPusher(fourthRow)
+            widePusher(4)
+            narrowPusher(fifthRow)
+            widePusher(5)
+
+    except BaseException:  # capture all exceptions including KeyboardInterrupt (Ctrl-C)
+        exit()
+
+
+
+if __name__=='__main__':
+    mosaicMachine()
