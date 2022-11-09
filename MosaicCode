@@ -1,7 +1,7 @@
 from utils import sound
 from utils.brick import TouchSensor, wait_ready_sensors
 from utils.brick import Motor
-import time
+from time import sleep
 
 #first, need to intake user inputs from buttons- input these into an array
 #add up user inputs- if more than 15 cubes used, output an error (sound on the speaker??)
@@ -18,6 +18,8 @@ import time
 # Associating ports
 NARROW_PUSHER = Motor("A")
 WIDE_PUSHER = Motor("B")
+NARROW_PUSHER.set_limits(power = 40)
+WIDE_PUSHER.set_limits(power = 40)
 button1 = TouchSensor(1) #for number 1
 button2 = TouchSensor(2) #for next, if 1 has just been pressed number will be 1. If 1 has not been pressed, number will be 0
 
@@ -32,6 +34,37 @@ fifthRow = []
 SOUNDERROR = sound.Sound(duration=0.5, volume=100, pitch="A4", mod_f=10, mod_k=2) #alien sound 
 #SOUND = sound.Sound(duration= 0.3, pitch=1000, volume=93)
 SOUNDINPUT = sound.Sound(duration = 0.1, pitch=480.00, volume= 100)
+
+def moveFirstPosition(motorName):
+    #move 480.8 degrees
+    motorName.set_position_relative(480.8)
+    sleep(.1)
+    motorName.set_position_relative(-480.8)
+
+def moveSecondPosition(motorName):
+#move 365.9 degrees
+    motorName.set_position_relative(365.9)
+    sleep(.1)
+    motorName.set_position_relative(-365.9)
+
+def moveThirdPosition(motorName):
+#move 251.1 degrees
+    motorName.set_position_relative(251.1)
+    sleep(.1)
+    motorName.set_position_relative(-251.1)
+
+def moveFourthPosition(motorName):
+#move 136.3 degrees
+    motorName.set_position_relative(136.3)
+    sleep(.1)
+    motorName.set_position_relative(136.3)
+
+def moveFifthPosition(motorName):
+#move 21.5 degrees
+    motorName.set_position_relative(21.5)
+    sleep(.1)
+    motorName.set_position_relative(21.5)
+
 
 
 wait_ready_sensors() # Note: Touch sensors actually have no initialization time 
@@ -52,30 +85,40 @@ def narrowPusher(rowNumber):
             if x == 0:
                 #move pusher to 1st position (furthest on board)
                 print("narrow pusher moved to 1st position")
+                moveFirstPosition(NARROW_PUSHER)
             if x == 1:
                 #move pusher to 2nd position (2nd furthest on board)
                 print("narrow pusher moved to 2nd position")
+                moveSecondPosition(NARROW_PUSHER)
             if x == 2:
                 #move pusher to 3rd position (middle on board)
                 print("narrow pusher moved to 3rd position")
+                moveThirdPosition(NARROW_PUSHER)
             if x == 3:
                 #move pusher to 4th position (2nd closest on board)
                 print("narrow pusher moved to 4th position")
+                moveFourthPosition(NARROW_PUSHER)
             if x == 4:
                 #move pusher to 5th position (closest on board)
                 print("narrow pusher moved to 5th position")
+                moveFifthPosition(NARROW_PUSHER)
 
 def widePusher(levelNumber):
     if levelNumber == 1:
         print("move widePusher to the first row (furthest)")
+        moveFirstPosition(WIDE_PUSHER)
     if levelNumber == 2:
         print("move widePusher to the second row")
+        moveSecondPosition(WIDE_PUSHER)
     if levelNumber == 3:
         print("move widePusher to the third row")
+        moveThirdPosition(WIDE_PUSHER)
     if levelNumber == 4:
         print("move widePusher to the fourth row")
+        moveFourthPosition(WIDE_PUSHER)
     if levelNumber == 5:
         print("move widePusher to the fifth row (closest)")
+        moveFifthPosition(WIDE_PUSHER)
 
 
 
